@@ -74,7 +74,7 @@ VAR --make-arg-env snappymail_conf=/usr/local/www/snappymail/data/_data_/_defaul
 RAW if appjail cmd jexec "${APPJAIL_JAILNAME}" [ ! -f "${snappymail_conf}" ]; then
     CMD echo "======> Creating Snappymail config file ... <======"
 
-    CMD if ! env SHELL=/bin/sh su -m www -c 'php /usr/local/www/snappymail/index.php > /tmp/snappymail-init.out 2>&1'; then \
+    CMD if ! su -m www -c 'php /usr/local/www/snappymail/index.php > /tmp/snappymail-init.out'; then \
             cat /tmp/snappymail-init.out; \
             exit 1; \
         fi

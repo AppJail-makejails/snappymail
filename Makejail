@@ -1,0 +1,111 @@
+INCLUDE options/options.makejail
+
+# Config
+ARG snappymail_worker_processes=auto
+ARG snappymail_worker_connections=1024
+ARG snappymail_upload_max_size=25M
+ARG snappymail_memory_limit=128M
+ARG snappymail_secure_cookies=1
+# Tag
+ARG snappymail_tag=13.2
+
+FROM --entrypoint gh+AppJail-makejails/snappymail snappymail:${snappymail_tag}
+
+# Use production environment.
+CMD ln -fs php.ini-production /usr/local/etc/php.ini
+
+# To ensure precedence.
+CMD mv /usr/local/etc/php-fpm.d/www.conf /usr/local/etc/php-fpm.d/001-www.conf
+# If a user uses pkg(8) to update their packages, this ensures that www.conf does
+# not overwrite the settings in the following configuration files. Although it is
+# preferable to use the Snappymail image to update it.
+CMD echo ';This file is intentionally empty since pkg(8) could install a new one overwriting' > /usr/local/etc/php-fpm.d/www.conf
+CMD echo ';the parameters described in other configuration files.' >> /usr/local/etc/php-fpm.d/www.conf
+
+# Config files.
+COPY usr
+
+# Secure cookies.
+RAW if [ "${snappymail_secure_cookies}" != 0 ]; then
+    CMD echo "======> Enabling secure cookies ... <======"
+    
+    VAR --make-arg-env php_ini=/usr/local/etc/php.ini-production
+
+    CMD initool set ${php_ini} Session session.cookie_httponly On |\
+        initool set - Session session.cookie_secure On |\
+        initool set - Session session.use_only_cookies On > /tmp/initool.out
+    CMD mv /tmp/initool.out ${php_ini}
+    CMD chmod 644 ${php_ini}
+RAW fi
+
+# NGINX.
+
+VAR nginx_conf=/usr/local/etc/nginx/nginx.conf
+
+CMD echo "======> Configuring NGINX ... <======"
+
+REPLACE ${nginx_conf} WORKER_PROCESSES ${snappymail_worker_processes}
+REPLACE ${nginx_conf} WORKER_CONNECTIONS ${snappymail_worker_connections}
+REPLACE ${nginx_conf} UPLOAD_MAX_SIZE ${snappymail_upload_max_size}
+
+# PHP-FPM.
+
+VAR fpm_conf=/usr/local/etc/php-fpm.d/002-snappymail.conf
+
+CMD echo "======> Configuring FPM ... <======"
+
+REPLACE ${fpm_conf} UPLOAD_MAX_SIZE ${snappymail_upload_max_size}
+REPLACE ${fpm_conf} MEMORY_LIMIT ${snappymail_memory_limit}
+
+# FPM.
+CMD echo "======> Starting FPM ... <======"
+SYSRC php_fpm_enable=YES
+SERVICE php-fpm start
+
+# NGINX.
+CMD echo "======> Starting NGINX ... <======"
+SYSRC nginx_enable=YES
+SERVICE nginx restart
+
+# Create Snappymail config file.
+
+VAR --make-arg-env snappymail_conf=/usr/local/www/snappymail/data/_data_/_default_/configs/application.ini
+
+RAW if appjail cmd jexec "${APPJAIL_JAILNAME}" [ ! -f "${snappymail_conf}" ]; then
+    CMD echo "======> Creating Snappymail config file ... <======"
+
+    CMD if ! su -m www -c 'php /usr/local/www/snappymail/index.php > /tmp/snappymail-init.out 2>&1'; then \
+            cat /tmp/snappymail-init.out; \
+            exit 1; \
+        fi
+    CMD rm -f /tmp/snappymail-init.out
+RAW fi
+
+# Configure Snappymail.
+
+CMD echo "======> Configuring 'logs' section ... <======"
+
+CMD mkdir -p /var/log/snappymail
+CMD chown www:www /var/log/snappymail
+CMD initool set ${snappymail_conf} logs enable On |\
+    initool set - logs path '"/var/log/snappymail"' |\
+    initool set - logs write_on_error_only Off |\
+    initool set - logs write_on_php_error_only On |\
+    initool set - logs auth_logging On |\
+    initool set - logs auth_logging_filename '"auth.log"' |\
+    initool set - logs auth_logging_format '"[{date:Y-m-d H:i:s}] Auth failed: ip={request:ip} user={imap:login} host={imap:host} port={imap:port}"' |\
+    initool set - logs auth_syslog Off > /tmp/initool.out
+CMD mv /tmp/initool.out ${snappymail_conf}
+CMD chown www:www ${snappymail_conf}
+CMD chmod 600 ${snappymail_conf}
+
+# Create admin password.
+CMD echo "======> Creating Snappymail admin password file ... <======"
+CMD fetch -qo /dev/null http://127.0.0.1/?/AdminAppData/0/12345/
+
+# Check Snappymail instance.
+CMD fetch -qo /dev/null http://127.0.0.1/
+
+CMD echo
+CMD echo "===> Your Snappymail instance is up and running! <==="
+CMD echo

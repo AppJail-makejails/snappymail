@@ -1,0 +1,2 @@
+OPTION volume=snappymail-data mountpoint:/usr/local/www/snappymail/data perm:700 owner:80 group:80
+OPTION volume=snappymail-log mountpoint:/var/log/snappymail owner:80 group:80

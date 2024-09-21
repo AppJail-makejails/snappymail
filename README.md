@@ -15,7 +15,7 @@ appjail makejail \
 
 ### Arguments
 
-* `snappymail_tag` (default: `13.3`): see [#tags](#tags).
+* `snappymail_tag` (default: `13.4`): see [#tags](#tags).
 * `snappymail_worker_processes` (default: `auto`): see [worker\_processes](https://nginx.org/en/docs/ngx_core_module.html#worker_processes).
 * `snappymail_worker_connections` (default: `1024`): see [worker\_connections](https://nginx.org/en/docs/ngx_core_module.html#worker_connections).
 * `snappymail_upload_max_size` (default: `25M`): Attachment size limit.
@@ -33,6 +33,6 @@ appjail makejail \
 
 | Tag      | Arch    | Version        | Type   |
 | -------- | ------- | -------------- | ------ |
-| `13.3`   | `amd64` | `13.3-RELEASE` | `thin` |
-| `13.3`   | `amd64` | `13.3-RELEASE` | `thin` |
+| `13.4`   | `amd64` | `13.4-RELEASE` | `thin` |
+| `13.4`   | `amd64` | `13.4-RELEASE` | `thin` |
 | `14.1`   | `amd64` | `14.1-RELEASE` | `thin` |

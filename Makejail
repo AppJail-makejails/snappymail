@@ -60,7 +60,7 @@ REPLACE ${fpm_conf} MEMORY_LIMIT ${snappymail_memory_limit}
 # FPM.
 CMD echo "======> Starting FPM ... <======"
 SYSRC php_fpm_enable=YES
-SERVICE php-fpm start
+SERVICE php_fpm start
 
 # NGINX.
 CMD echo "======> Starting NGINX ... <======"

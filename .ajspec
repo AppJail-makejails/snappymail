@@ -1,16 +1,17 @@
 tags+: 13.5
 13.5.arch: amd64
 13.5.name: "snappymail"
-13.5.timestamp.amd64: 1742326804
-13.5.sum.amd64: 184c939e63b73273acbc0031a2cb35de0baa782dc92d965fe4137703adb38bd2
-13.5.size.amd64: 113060156
-13.5.source.amd64: "http://appjail.hpc.at/snappymail/13.5-amd64-image.appjail"
-13.5.source.amd64+: "https://images.all101bsd.download/snappymail/13.5-amd64-image.appjail"
+13.5.timestamp.amd64: 1744229596
+13.5.sum.amd64: fada7299dad42d0d689d40d9be346f2e0c4d28f690a0d38416dc72a4fefaf803
+13.5.size.amd64: 112807763
+13.5.source.amd64: "https://images.all101bsd.download/snappymail/13.5-amd64-image.appjail"
+13.5.source.amd64+: "http://appjail.hpc.at/snappymail/13.5-amd64-image.appjail"
 tags+: 14.2
 14.2.arch: amd64
 14.2.name: "snappymail"
-14.2.timestamp.amd64: 1742327146
-14.2.sum.amd64: 0b82261b497bb2f54ffe52c87135ea0fe388742a6ecf9fa2d1600c45c49d3493
-14.2.size.amd64: 112557561
-14.2.source.amd64: "http://appjail.hpc.at/snappymail/14.2-amd64-image.appjail"
-14.2.source.amd64+: "https://images.all101bsd.download/snappymail/14.2-amd64-image.appjail"
+14.2.timestamp.amd64: 1744229757
+14.2.sum.amd64: c67fa1d75539b3002f0d42f6cb1db2dbaf2fb661372d6e66052c48f361d86dc6
+14.2.size.amd64: 110833450
+14.2.source.amd64: "https://images.all101bsd.download/snappymail/14.2-amd64-image.appjail"
+14.2.source.amd64+: "http://appjail.hpc.at/snappymail/14.2-amd64-image.appjail"
+maintenance: "This image is uploading, please wait a moment and try again. If you are importing this image using a Makejail that has the '--<name>_ajspec' argument, you can use the 'reproduce' method to use 'appjail-reproduce'. See 'appjail-image(5)' for details."

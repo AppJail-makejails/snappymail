@@ -15,7 +15,7 @@ appjail makejail \
 
 ### Arguments
 
-* `snappymail_tag` (default: `13.5`): see [#tags](#tags).
+* `snappymail_tag` (default: `14.3`): see [#tags](#tags).
 * `snappymail_ajspec` (default: `gh+AppJail-makejails/snappymail`): Entry point where the `appjail-ajspec(5)` file is located.
 * `snappymail_worker_processes` (default: `auto`): see [worker\_processes](https://nginx.org/en/docs/ngx_core_module.html#worker_processes).
 * `snappymail_worker_connections` (default: `1024`): see [worker\_connections](https://nginx.org/en/docs/ngx_core_module.html#worker_connections).
@@ -34,5 +34,5 @@ appjail makejail \
 
 | Tag      | Arch    | Version        | Type   |
 | -------- | ------- | -------------- | ------ |
-| `13.5`   | `amd64` | `13.5-RELEASE` | `thin` |
 | `14.3`   | `amd64` | `14.3-RELEASE` | `thin` |
+| `15`   | `amd64` | `15` | `thin` |

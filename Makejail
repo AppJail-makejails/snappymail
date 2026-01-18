@@ -9,7 +9,7 @@ ARG snappymail_upload_max_size=25M
 ARG snappymail_memory_limit=128M
 ARG snappymail_secure_cookies=1
 # Tag
-ARG snappymail_tag=13.5
+ARG snappymail_tag=14.3
 
 FROM --entrypoint "${snappymail_ajspec}" snappymail:${snappymail_tag}
 

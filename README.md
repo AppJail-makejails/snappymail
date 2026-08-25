@@ -2,37 +2,66 @@
 
 SnappyMail is a simple, modern and fast web-based email client, fork of Rainloop that aims to apply hardening, modernization and a more lightweight experience.
 
+github.com/the-djmaze/snappymail
+
+<img src="https://github.com/the-djmaze/snappymail/blob/master/snappymail/v/0.0.0/static/logo-512.png?raw=true" width="30%" height="auto" alt="SnappyMail logo">
+
 ## How to use this Makejail
 
-```sh
-appjail makejail \
-    -j snappymail \
-    -f gh+AppJail-makejails/snappymail \
+```console
+$ mkdir -p /var/appjail-volumes/snappymail/data
+$ appjail oci run -Pd \
+    -o overwrite=force \
     -o virtualnet=":<random> default" \
     -o nat \
-    -o expose=80
+    -o template=template.conf \ # optional, see below
+    -o fstab="/var/appjail-volumes/snappymail/data /data" \
+    ghcr.io/appjail-makejails/snappymail snappymail
 ```
 
-### Arguments
+**template.conf**:
 
-* `snappymail_tag` (default: `14.3`): see [#tags](#tags).
-* `snappymail_ajspec` (default: `gh+AppJail-makejails/snappymail`): Entry point where the `appjail-ajspec(5)` file is located.
-* `snappymail_worker_processes` (default: `auto`): see [worker\_processes](https://nginx.org/en/docs/ngx_core_module.html#worker_processes).
-* `snappymail_worker_connections` (default: `1024`): see [worker\_connections](https://nginx.org/en/docs/ngx_core_module.html#worker_connections).
-* `snappymail_upload_max_size` (default: `25M`): Attachment size limit.
-* `snappymail_memory_limit` (default: `128M`): PHP memory limit.
-* `snappymail_secure_cookies` (default: `1`): see [session.cookie_httponly](https://www.php.net/manual/en/session.configuration.php#ini.session.cookie-httponly), [session.cookie_secure](https://www.php.net/manual/en/session.configuration.php#ini.session.cookie-secure) and [session.use_only_cookies](https://www.php.net/manual/en/session.configuration.php#ini.session.use-only-cookies).
+```
+exec.start: "/bin/sh /etc/rc"
+exec.stop: "/bin/sh /etc/rc.shutdown jail"
+mount.devfs
+persist
+# Optional, but recommended to suppress “gpg: Warning: using insecure memory!”,
+# a warning you should suppress to prevent memory that should not be swapped
+# from memory.
+allow.mlock
+```
+
+### Arguments (stage: build)
+
+* `snappymail_from` (default: `ghcr.io/appjail-makejails/snappymail`): Location of OCI image. See also [OCI Configuration](#oci-configuration).
+* `snappymail_tag` (default: `latest`): OCI image tag. See also [OCI Configuration](#oci-configuration).
+
 
 ### Volumes
 
-| Name            | Owner | Group | Perm | Type | Mountpoint                     |
-| --------------- | ----- | ----- | ---- | ---- | ------------------------------ |
-| snappymail-data |  80   |  80   | 700  |  -   | /usr/local/www/snappymail/data |
-| snappymail-log  |  80   |  80   |  -   |  -   | /var/log/snappymail            |
+| Name | Owner | Group | Perm | Type | Mountpoint |
+| --- | --- | --- | --- | --- | --- |
+| appjail-263aca83a3-data | `${PUID}` | `${PGID}` | - | - | /data |
 
-## Tags
+## OCI Configuration
 
-| Tag      | Arch    | Version        | Type   |
-| -------- | ------- | -------------- | ------ |
-| `14.3`   | `amd64` | `14.3-RELEASE` | `thin` |
-| `15`   | `amd64` | `15` | `thin` |
+```yaml
+build:
+  variants:
+    - tag: 15.1
+      containerfile: Containerfile
+      aliases: ["latest"]
+      default: true
+      args:
+        FREEBSD_RELEASE: "15.1"
+        APACHEVER: "24"
+        PHPVER: "84"
+        PYVER: "312"
+        NO_PKGCLEAN: "1"
+      cache_dirs: ["pkgcache0:/var/cache/pkg"]
+```
+
+## Notes
+
+1. The ideas present in the Docker image of SnappyMail are taken into account for users who are familiar with it.
